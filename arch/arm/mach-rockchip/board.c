@@ -471,6 +471,19 @@ int board_late_init(void)
 #ifdef CONFIG_ROCKCHIP_USB_BOOT
 	boot_from_udisk();
 #endif
+#ifdef CONFIG_DM_POWER_DELIVERY
+	{
+		struct udevice *pd_dev = NULL;
+
+		/* Probe the USB PD controller (e.g. FUSB302) so PD
+		 * negotiation completes during boot; strict PD chargers
+		 * hard-reset VBUS if the sink stays silent for ~5s, which
+		 * power-cycles boards without a battery before the kernel
+		 * TCPM driver can take over.
+		 */
+		uclass_get_device(UCLASS_PD, 0, &pd_dev);
+	}
+#endif
 #ifdef CONFIG_DM_CHARGE_DISPLAY
 	charge_display();
 #endif
